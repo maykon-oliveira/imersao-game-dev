@@ -1,40 +1,81 @@
-class Character {
-  constructor(img, spriteCollum, spriteRow) {
-    this.img = img;
-    this.spriteWidth = this.img.width / spriteCollum;
-    this.spriteHeight = this.img.height / spriteRow;
-
-    this.matriz = [];
-
-    for (let y = 0; y < this.img.height; y += this.spriteHeight) {
-      for (let x = 0; x < this.img.width; x += this.spriteWidth) {
-        this.matriz.push([x, y]);
-      }
-    }
-
-    this.spriteIndex = 0;
-  }
-
-  display() {
-    image(
-      this.img,
-      0,
-      height - 135,
-      110,
-      135,
-      this.matriz[this.spriteIndex][0],
-      this.matriz[this.spriteIndex][1],
-      220,
-      this.spriteHeight
+class Character extends Animation {
+  constructor(
+    matriz,
+    imagem,
+    x,
+    variacaoY,
+    largura,
+    altura,
+    larguraSprite,
+    alturaSprite
+  ) {
+    super(
+      matriz,
+      imagem,
+      x,
+      variacaoY,
+      largura,
+      altura,
+      larguraSprite,
+      alturaSprite
     );
 
-    this.update();
+    this.variacaoY = variacaoY;
+
+    this.yInicial = height - this.altura - this.variacaoY;
+    this.y = this.yInicial;
+
+    this.velocidadeDoPulo = 0;
+    this.gravidade = 6;
+    this.alturaDoPulo = -40;
+    this.pulos = 0;
+    this.invencivel = false;
   }
 
-  update() {
-    this.spriteIndex++;
-    if (this.matriz.length == this.spriteIndex) {
-      this.spriteIndex = 0;
+  pula() {
+    if (this.pulos < 2) {
+      this.velocidadeDoPulo = this.alturaDoPulo;
+      this.pulos = this.pulos + 1;
     }
+  }
+
+  aplicaGravidade() {
+    this.y = this.y + this.velocidadeDoPulo;
+    this.velocidadeDoPulo = this.velocidadeDoPulo + this.gravidade;
+
+    if (this.y > this.yInicial) {
+      this.y = this.yInicial;
+
+      this.pulos = 0;
+    }
+  }
+
+  tornarInvencivel() {
+    this.invencivel = true;
+    setTimeout(() => {
+      this.invencivel = false;
+    }, 500);
+  }
+
+  estaColidindo(inimigo) {
+    if (this.invencivel) {
+      return false;
+    }
+
+    // HitBox.
+    const precisao = 0.5;
+
+    const colisao = collideRectRect(
+      this.x,
+      this.y,
+      this.largura * precisao,
+      this.altura * precisao,
+      inimigo.x,
+      inimigo.y,
+      inimigo.largura * precisao,
+      inimigo.altura * precisao
+    );
+
+    return colisao;
   }
 }

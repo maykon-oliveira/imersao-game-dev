@@ -1,27 +1,26 @@
 class Scene {
-  constructor(img, speed) {
-    this.img = img;
-    this.speed = speed;
+  constructor(imagem, velocidade) {
+    this.imagem = imagem;
+    this.velocidade = 5; //velocidade;
     this.x1 = 0;
     this.x2 = width;
   }
 
-  display() {
-    image(this.img, this.x1, 0, width, height);
-    image(this.img, this.x2, 0, width, height);
-
-    this.update();
+  exibe() {
+    image(this.imagem, this.x1, 0, width, height);
+    image(this.imagem, this.x2, 0, width, height);
   }
 
-  update() {
-    this.x1 -= this.speed;
-    this.x2 -= this.speed;
+  move() {
+    this.x1 = this.x1 - this.velocidade;
+    this.x2 = this.x2 - this.velocidade;
 
     if (this.x1 < -width) {
       this.x1 = width;
     }
+
     if (this.x2 < -width) {
-      this.x1 = width;
+      this.x2 = width;
     }
   }
 }
